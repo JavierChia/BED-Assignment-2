@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./img/Logo.ico" />
+    <title>DVD Rental Store</title>
+    <link rel="stylesheet" href="./css/addActor.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () { //This is to prevent any jQuery code from running before the document is finished loading (is ready). alternative: $(document).ready(function()
+            loginToLogout(); //check if user is logged in
+            onAdminClick();
+            onLoginClick();
+            onAddActor();
+            cart();
+        })
+    </script>
+
+</head>
+
+<body>
+    
+
+    <!--DESCRIPTION-->
+    <div class='added hide'>
+        <span class="fa-solid fa-circle-check"></span>
+        <span class="msg">Successfully added a new Actor!</span>
+    </div>
+    <div class='loggedIn hide'>
+        <span class="fa-solid fa-circle-check"></span>
+        <span class="msg">Successfully logged in!</span>
+    </div>
+    <div class='loggedOut hide'>
+        <span class="fa-solid fa-arrow-right-from-bracket"></span>
+        <span class="msg">Successfully logged out!</span>
+    </div>
+    <div class='enter hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">Please fill up all the fields!</span>
+    </div>
+    <div class='alertCart hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">Login to access shopping cart!</span>
+        <span class="close-btn-2">
+            <span class="fa-solid fa-xmark"></span>
+        </span>
+    </div>
+    <header>
+        <div class="back">
+            <a href="admin.html" class="backBtn">
+                <span class="fa-solid fa-arrow-left"></span>
+            </a>
+            <h2 class="addActorHeader">Add Actor</h2>
+        </div>
+        <nav class="navigation">
+            <a href="homePage.html">Home</a>
+            <a id ="cart" style ="cursor: pointer;">Shopping Cart</a>
+            <a id="admin" style="color: #fff">Admin</a>
+            <button class="btnLogin" id="btnLogin">Login</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="top-row">
+            <div class="firstname-bar-container">
+                <input type="text" class="firstname-bar" placeholder="First Name" id="fName">
+            </div>
+            <div class="lastname-bar-container">
+                <input type="text" class="lastname-bar" placeholder="Last Name" id="lName">
+            </div>
+        </div>
+        <div class="bottom-row">
+            <div class="submit-container">
+                <button type="submit" class="submit-button" id="addActor">Add!
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="functions.js"></script>
+</body>
+
+</html>

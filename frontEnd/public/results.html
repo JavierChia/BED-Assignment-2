@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="shortcut icon" type="image/x-icon" href="./img/Logo.ico" />
+    <title>DVD Rental Store</title>
+    <link rel="stylesheet" href="./css/results.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script>
+        var shoppingCart = []
+        $(document).ready(function () {
+            loginToLogout(); //check if user is logged in
+
+            onAdminClick();
+
+            onLoginClick();
+
+            cart()
+
+            let data = localStorage.getItem('data');
+            if (data) {
+                data = JSON.parse(data);
+                // use the data to display the results
+                if (data.length === 0) {
+                    var container = document.getElementById("card-container2");
+                    var noResult = document.createElement("div");
+                    noResult.innerHTML = "No results!";
+                    container.appendChild(noResult);
+                } else {
+                    displayData(data);
+                }
+            }
+            outputCart()
+
+            $(document).on("click", ".addtocart", function () {
+                if (localStorage.getItem("userType") == "customer") {
+                    var title = $(this).data("title");
+                    var filmID = $(this).data("id");
+                    var year = $(this).data("year");
+                    var rate = $(this).data("rate");
+                    var duration = $(this).data("duration");
+                    shoppingCart.push([title, year, rate, filmID, duration])
+                    sessionStorage["sc"] = JSON.stringify(shoppingCart)
+                    outputCart()
+                } else {
+                    $(".alertCart").removeClass("hide");
+                    $(".alertCart").addClass("show");
+                    $(".alertCart").addClass("showAlert");
+                    setTimeout(function () {
+                        $(".alertCart").addClass("hide");
+                        $(".alertCart").removeClass("show");
+                    }, 5000);
+                    $(".close-btn-2").click(function () {
+                        $(".alertCart").addClass("hide");
+                        $(".alertCart").removeClass("show");
+                    });
+                }
+            });
+        });
+
+
+        function outputCart() {
+            if (sessionStorage['sc'] != null) {
+                shoppingCart = JSON.parse(sessionStorage['sc'].toString())
+                console.log(sessionStorage["sc"])
+            }
+        }
+
+        $(document).on("click", ".viewdetails", function () {
+            var title = $(this).data("title");
+            $.ajax({
+                url: "http://localhost:8081/getAllDetails?title=" + title,
+                type: "GET",
+                success: function (data, textStatus, xhr) {
+                    if (data != null) {
+                        localStorage.setItem('data', JSON.stringify(data));
+                        window.location.assign("http://localhost:3000/dvdDetails.html");
+                    } else {
+                        console.log('err')
+                    }
+                },
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log('Error in Operation');
+                }
+            }); return false
+        });
+
+        function displayData(data) {
+            var container = document.getElementById("card-container");
+
+            var rows = [];
+            for (var i = 0; i < data.length; i += 6) {
+                var row = document.createElement("div");
+                row.classList.add("row", "mb-4"); // add Bootstrap class to add margin-bottom
+                rows.push(row);
+            }
+            data.forEach(function (item, index) {
+                var row = rows[Math.floor(index / 6)];
+
+                var col = document.createElement("div");
+                col.classList.add("col-2");
+
+                var card = document.createElement("a");
+                card.classList.add("card", "h-100", "clickable-card");
+
+                var cardBody = document.createElement("div");
+                cardBody.classList.add("card-body");
+
+                var cardImage = document.createElement("img");
+                cardImage.classList.add("card-img-top");
+                if (!item.img) {
+                    cardImage.src = '/img/horizontalph.png';
+                } else {
+                    cardImage.src = item.img;
+                }
+                card.appendChild(cardImage);
+
+
+                var cardTitle = document.createElement("h5");
+                cardTitle.classList.add("card-title");
+                cardTitle.innerHTML = item.title;
+                cardTitle.style.fontSize = "20px";
+                cardTitle.style.fontWeight = "600";
+                cardBody.appendChild(cardTitle);
+
+                var cardText = document.createElement("p");
+                cardText.classList.add("card-text", "text-muted");
+
+                var ratingSpan = document.createElement("span");
+                ratingSpan.classList.add('rating')
+                ratingSpan.style.fontSize = "14px";
+                if (item.rating === "PG-13") {
+                    ratingSpan.style.borderColor = "plum";
+                    ratingSpan.style.color = "plum";
+                } else if (item.rating === "R") {
+                    ratingSpan.style.borderColor = "tomato";
+                    ratingSpan.style.color = "tomato";
+                } else if (item.rating === "G") {
+                    ratingSpan.style.borderColor = "seagreen";
+                    ratingSpan.style.color = "seagreen";
+                } else if (item.rating === "PG") {
+                    ratingSpan.style.borderColor = "lightcoral";
+                    ratingSpan.style.color = "lightcoral";
+                } else if (item.rating === "NC-17") {
+                    ratingSpan.style.borderColor = "dodgerblue";
+                    ratingSpan.style.color = "dodgerblue";
+                }
+                ratingSpan.innerHTML = item.rating;
+
+                var releaseYearSpan = document.createElement("span");
+                releaseYearSpan.classList.add('releaseyear')
+                releaseYearSpan.style.fontSize = "14px";
+                releaseYearSpan.style.color = "#acacac";
+                releaseYearSpan.innerHTML = item.release_year;
+
+                var rentalRateSpan = document.createElement("span");
+                rentalRateSpan.classList.add('rentalrate')
+                rentalRateSpan.style.fontSize = "14px";
+                rentalRateSpan.style.color = "#fff";
+                rentalRateSpan.style.borderColor = "#ff";
+                rentalRateSpan.innerHTML = '$' + item.rental_rate;
+
+                var addToCart = document.createElement("div");
+                addToCart.classList.add('addtocart')
+                addToCart.style.fontSize = "14px";
+                addToCart.innerHTML = 'Add to Cart!';
+                addToCart.setAttribute("data-title", item.title);
+                addToCart.setAttribute("data-year", item.release_year);
+                addToCart.setAttribute("data-rate", item.rental_rate);
+                addToCart.setAttribute("data-id", item.id);
+                addToCart.setAttribute("data-duration", item.duration);
+
+                var viewDetails = document.createElement("div");
+                viewDetails.classList.add('viewdetails')
+                viewDetails.style.fontSize = "14px";
+                viewDetails.innerHTML = 'View';
+                viewDetails.setAttribute("data-title", item.title);
+
+                cardText.appendChild(releaseYearSpan);
+                cardText.appendChild(ratingSpan);
+                cardText.appendChild(rentalRateSpan);
+
+                cardBody.appendChild(cardText);
+                cardBody.appendChild(addToCart);
+                cardBody.appendChild(viewDetails);
+
+                card.appendChild(cardBody);
+                col.appendChild(card);
+                row.appendChild(col);
+            });
+
+            rows.forEach(function (row) {
+                container.appendChild(row);
+            });
+        }
+    </script>
+</head>
+
+
+<body>
+    <div class='alert hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">You do not have access to the admin page!</span>
+        <span class="close-btn">
+            <span class="fa-solid fa-xmark"></span>
+        </span>
+    </div>
+    <div class='loggedIn hide'>
+        <span class="fa-solid fa-circle-check"></span>
+        <span class="msg">Successfully logged in!</span>
+    </div>
+    <div class='loggedOut hide'>
+        <span class="fa-solid fa-arrow-right-from-bracket"></span>
+        <span class="msg">Successfully logged out!</span>
+    </div>
+    <div class='alertCart hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">Login to access shopping cart!</span>
+        <span class="close-btn-2">
+            <span class="fa-solid fa-xmark"></span>
+        </span>
+    </div>
+
+    <header>
+        <div class="back">
+            <a href="#" onclick="window.history.back();" class="backBtn">
+                <span class="fa-solid fa-arrow-left"></span>
+            </a>
+            <h2 class="addActorHeader">Search Results</h2>
+        </div>
+        <nav class="navigation">
+            <a href="homePage.html">Home</a>
+            <a id="cart" style="cursor: pointer;">Shopping Cart</a>
+            <a id="admin" style="color: #fff">Admin</a>
+            <button class="btnLogin" id="btnLogin">Login</button>
+        </nav>
+    </header>
+
+    <div class="cardd-container">
+        <div class="card-container" id="card-container"></div>
+    </div>
+
+    <div class="cardd-container2">
+        <div class="card-container2" id="card-container2"></div>
+    </div>
+
+    <!--LOGIN & REGISTER-->
+    <div class="wrapper">
+        <span class="icon-close">
+            <i class="fa-solid fa-xmark"></i>
+        </span>
+
+        <div class="form-box login">
+            <h2>Login</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" id="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" required>
+                    <label>Password</label>
+                </div>
+
+                <div class="remember-forgot">
+                    <label><input type="checkbox">Remember me</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn" id="login">Login</button>
+
+                <div class="login-register">
+                    <p>Don't have an account? <a href="#" class="register-link"> Register</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-box register">
+            <h2>Registration</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input type="text" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" required>
+                    <label>Password</label>
+                </div>
+
+                <button type="submit" class="btn">Register</button>
+
+                <div class="login-register">
+                    <p>Already have an account? <a href="#" class="login-link"> Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script src="functions.js"></script>
+<script src="script.js"></script>
+
+</html>

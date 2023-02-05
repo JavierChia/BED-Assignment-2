@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./img/Logo.ico" />
+    <title>DVD Rental Store</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () { //This is to prevent any jQuery code from running before the document is finished loading (is ready). alternative: $(document).ready(function()
+            onAdminClick();
+            
+            loginToLogout();
+
+            onLoginClick();
+
+            cart()
+
+            onCheckoutClick();
+            
+        })
+    </script>
+
+</head>
+
+<body>
+    <div class='alert hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">You do not have access to the admin page!</span>
+        <span class="close-btn">
+            <span class="fa-solid fa-xmark"></span>
+        </span>
+    </div>
+
+    <div class='alertCart hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">Login to access shopping cart!</span>
+        <span class="close-btn-2">
+            <span class="fa-solid fa-xmark"></span>
+        </span>
+    </div>
+
+    <div class='loggedIn hide'>
+        <span class="fa-solid fa-circle-check"></span>
+        <span class="msg">Successfully logged in!</span>
+    </div>
+    <div class='loggedOut hide'>
+        <span class="fa-solid fa-arrow-right-from-bracket"></span>
+        <span class="msg">Successfully logged out!</span>
+    </div>
+    <header>
+        <h2 class="logo"><a href="index.html">DVD Rental Store</a></h2>
+
+        <nav class="navigation">
+            <a href="homePage.html">Home</a>
+            <a id ="cart" style ="cursor: pointer;">Shopping Cart</a>
+            <a id="admin">Admin</a>
+            <button class="btnLogin" id="btnLogin">Login</button>
+        </nav>
+    </header>
+
+    <!--DESCRIPTION-->
+    <div class="description-container">
+        <div class="description">
+            Welcome to our DVD rental store! Our store is dedicated to providing you with a convenient and
+            enjoyable rental experience. Browse our online inventory and place a reservation on any film you like!
+        </div>
+
+        <a href="homePage.html"><button class="startBrowsing">Start Browsing!</button></a>
+    </div>
+
+    <!--LOGIN & REGISTER-->
+    <div class="wrapper">
+        <span class="icon-close">
+            <i class="fa-solid fa-xmark"></i>
+        </span>
+
+        <div class="form-box login">
+            <h2>Login</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" id="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" required>
+                    <label>Password</label>
+                </div>
+
+                <div class="remember-forgot">
+                    <label><input type="checkbox">Remember me</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn" id="login">Login</button>
+
+                <div class="login-register">
+                    <p>Don't have an account? <a href="#" class="register-link"> Register</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-box register">
+            <h2>Registration</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input type="text" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" required>
+                    <label>Password</label>
+                </div>
+
+                <button type="submit" class="btn">Register</button>
+
+                <div class="login-register">
+                    <p>Already have an account? <a href="#" class="login-link"> Login</a></p>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+    <script src="functions.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

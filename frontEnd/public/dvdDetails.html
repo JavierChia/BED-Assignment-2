@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous" />
+    <link rel="shortcut icon" type="image/x-icon" href="./img/Logo.ico" />
+    <title>DVD Rental Store</title>
+    <link rel="stylesheet" href="./css/details.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script>
+        var shoppingCart = []
+        $(document).ready(function () {
+            loginToLogout(); //check if user is logged in
+
+            onAdminClick();
+
+            onLoginClick();
+
+            cart()
+
+            let data = localStorage.getItem("data");
+            if (data) {
+                data = JSON.parse(data);
+                // use the data to display the results
+                displayData(data);
+                console.log(data)
+            }
+
+            outputCart()
+
+            $(document).on("click", ".addBtn", function () {
+                if (localStorage.getItem('token') !== null && localStorage.getItem("userType") == "customer") {
+                    var title = $(this).data("title");
+                    var filmID = $(this).data("id");
+                    var year = $(this).data("year");
+                    var rate = $(this).data("rate");
+                    var duration = $(this).data("duration");
+                    shoppingCart.push([title, year, rate, filmID, duration])
+                    sessionStorage["sc"] = JSON.stringify(shoppingCart)
+                    outputCart()
+                } else {
+                    $(".alertCart").removeClass("hide");
+                    $(".alertCart").addClass("show");
+                    $(".alertCart").addClass("showAlert");
+                    setTimeout(function () {
+                        $(".alertCart").addClass("hide");
+                        $(".alertCart").removeClass("show");
+                    }, 5000);
+                    $(".close-btn-2").click(function () {
+                        $(".alertCart").addClass("hide");
+                        $(".alertCart").removeClass("show");
+                    });
+                }
+            });
+
+            function outputCart() {
+                if (sessionStorage['sc'] != null) {
+                    shoppingCart = JSON.parse(sessionStorage['sc'].toString())
+                    console.log(sessionStorage["sc"])
+                }
+            }
+
+            function displayData(data) {
+                let container = document.getElementById("card-container");
+                for (let i = 0; i < data.length; i++) {
+                    let card = document.createElement("div");
+                    card.className = "card";
+
+                    let imgSrc = data[i].img;
+                    if (!imgSrc) {
+                        imgSrc = "./img/verticalph.png";
+                    }
+
+                    let cardContent = document.createElement("div");
+                    cardContent.className = "card-content";
+
+                    let img = document.createElement("img");
+                    img.className = "card-img-left";
+                    img.src = imgSrc;
+
+                    let cardBody = document.createElement("div");
+                    cardBody.className = "card-body";
+
+                    var cardHeader = document.createElement('div')
+                    cardHeader.style.display = "flex"
+                    cardHeader.style.flexDirection = "row"
+                    cardHeader.style.justifyContent = "space-between"
+
+
+                    var cardTitle = document.createElement("h5");
+                    cardTitle.classList.add("card-title");
+                    cardTitle.innerHTML = data[i].title + ` (` + data[i].release_year + `)  `;
+                    cardTitle.style.fontSize = "30px";
+                    cardTitle.style.fontWeight = "700";
+
+                    var cardAdd = document.createElement("button");
+                    cardAdd.innerHTML = `<span class="fa-solid fa-square-plus"></span>`
+                    cardAdd.classList.add("addBtn");
+                    cardAdd.style.border = 'none';
+                    cardAdd.style.color = '#333';
+                    cardAdd.style.fontSize = '60px';
+                    cardAdd.style.marginBottom = '-30px';
+                    cardAdd.style.marginRight = '9px';
+                    cardAdd.style.marginTop = '-10px';
+                    cardAdd.setAttribute("data-title", data[i].title);
+                    cardAdd.setAttribute("data-year", data[i].release_year);
+                    cardAdd.setAttribute("data-rate", data[i].rental_rate);
+                    cardAdd.setAttribute("data-id", data[i].id);
+                    cardAdd.setAttribute("data-duration", data[i].duration);
+
+                    cardHeader.appendChild(cardTitle)
+                    cardHeader.appendChild(cardAdd)
+
+                    cardBody.appendChild(cardHeader);
+
+                    var cardText = document.createElement("p");
+                    cardText.classList.add("card-text", "text-muted");
+
+                    var ratingSpan = document.createElement("span");
+                    ratingSpan.classList.add('rating')
+                    ratingSpan.style.fontSize = "18px";
+                    if (data[i].rating === "PG-13") {
+                        ratingSpan.style.borderColor = "plum";
+                        ratingSpan.style.color = "plum";
+                    } else if (data[i].rating === "R") {
+                        ratingSpan.style.borderColor = "tomato";
+                        ratingSpan.style.color = "tomato";
+                    } else if (data[i].rating === "G") {
+                        ratingSpan.style.borderColor = "seagreen";
+                        ratingSpan.style.color = "seagreen";
+                    } else if (data[i].rating === "PG") {
+                        ratingSpan.style.borderColor = "lightcoral";
+                        ratingSpan.style.color = "lightcoral";
+                    } else if (data[i].rating === "NC-17") {
+                        ratingSpan.style.borderColor = "dodgerblue";
+                        ratingSpan.style.color = "dodgerblue";
+                    }
+                    ratingSpan.innerHTML = data[i].rating;
+
+                    var categorySpan = document.createElement("span");
+                    categorySpan.classList.add('category')
+                    categorySpan.style.fontSize = "18px";
+                    categorySpan.style.color = "#000";
+                    categorySpan.style.borderColor = "#ff";
+                    categorySpan.innerHTML = ' &nbsp•&nbsp ' + data[i].category;
+
+                    var lengthSpan = document.createElement("span");
+                    lengthSpan.classList.add('length')
+                    lengthSpan.style.fontSize = "18px";
+                    lengthSpan.style.color = "#000";
+                    lengthSpan.style.borderColor = "#ff";
+                    lengthSpan.innerHTML = ' &nbsp•&nbsp ' + convertMinutesToHours(data[i].length);
+
+                    var languageSpan = document.createElement("span");
+                    languageSpan.classList.add('language')
+                    languageSpan.style.fontSize = "18px";
+                    languageSpan.style.color = "#000";
+                    languageSpan.style.borderColor = "#ff";
+                    languageSpan.innerHTML = ' &nbsp•&nbsp ' + data[i].language;
+
+                    var cardSypnosisTitle = document.createElement("div");
+                    cardSypnosisTitle.classList.add('sypnosistitle')
+                    cardSypnosisTitle.innerHTML = 'Sypnosis';
+                    cardSypnosisTitle.style.fontSize = "20px";
+
+                    var cardSypnosis = document.createElement("div");
+                    cardSypnosis.classList.add('sypnosis')
+                    cardSypnosis.innerHTML = data[i].description;
+                    cardSypnosis.style.fontSize = "20px";
+
+                    var cardCastTitle = document.createElement("div");
+                    cardCastTitle.classList.add('casttitle')
+                    cardCastTitle.innerHTML = 'Cast';
+                    cardCastTitle.style.fontSize = "20px";
+
+                    var cardCast = document.createElement("div");
+                    cardCast.classList.add('cast')
+                    cardCast.innerHTML = data[i].all_actors;
+                    cardCast.style.fontSize = "20px";
+
+                    var cardSFTitle = document.createElement("div");
+                    cardSFTitle.classList.add('sftitle')
+                    cardSFTitle.innerHTML = 'Special Features';
+                    cardSFTitle.style.fontSize = "20px";
+
+                    var cardSF = document.createElement("div");
+                    cardSF.classList.add('sf')
+                    const iSF = (data[i].special_features).split(",")
+                    console.log(iSF)
+                    for (let feature of iSF) {
+                        let featureDiv = document.createElement("div");
+                        cardSF.classList.add('isf')
+                        featureDiv.innerHTML = feature;
+                        featureDiv.style.fontSize = "20px";
+                        featureDiv.style.backgroundColor = "#333";
+                        featureDiv.style.color = "#fff";
+                        featureDiv.style.borderRadius = "5px";
+                        featureDiv.style.margin = "8px";
+                        featureDiv.style.paddingTop = "5px";
+                        featureDiv.style.paddingBottom = "5px";
+                        featureDiv.style.paddingLeft = "10px";
+                        featureDiv.style.paddingRight = "10px";
+                        featureDiv.style.marginBottom = "30px";
+                        cardSF.appendChild(featureDiv);
+                    }
+
+                    var cardRentContainer = document.createElement("span");
+                    cardRentContainer.classList.add("rentContainer")
+
+                    var cardRentTitle = document.createElement("span");
+                    cardRentTitle.classList.add('rentTitle')
+                    cardRentTitle.innerHTML = 'Rental Rate: &nbsp&nbsp&nbsp';
+                    cardRentTitle.style.fontSize = "20px";
+                    cardRentContainer.appendChild(cardRentTitle)
+
+                    var cardRent = document.createElement("span");
+                    cardRent.classList.add('rentalrate')
+                    cardRent.innerHTML = '$ ' + data[i].rental_rate;
+                    cardRent.style.fontSize = "20px";
+                    cardRent.style.fontWeight = "500";
+                    cardRentContainer.appendChild(cardRent)
+
+                    cardContent.appendChild(img);
+                    cardText.appendChild(ratingSpan);
+                    cardText.appendChild(categorySpan);
+                    cardText.appendChild(lengthSpan);
+                    cardText.appendChild(languageSpan);
+
+                    cardBody.appendChild(cardText);
+                    cardBody.appendChild(cardSypnosisTitle);
+                    cardBody.appendChild(cardSypnosis);
+                    cardBody.appendChild(cardCastTitle);
+                    cardBody.appendChild(cardCast);
+                    cardBody.appendChild(cardSFTitle);
+                    cardBody.appendChild(cardSF);
+                    cardBody.appendChild(cardRentContainer);
+
+                    card.appendChild(cardContent);
+                    card.appendChild(cardBody);
+                    container.appendChild(card);
+                }
+            }
+        });
+        function convertMinutesToHours(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return hours + 'h ' + mins + 'm';
+        };
+    </script>
+</head>
+
+<body>
+    <div class='alert hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">You do not have access to the admin page!</span>
+        <span class="close-btn">
+            <span class="fa-solid fa-xmark"></span>
+        </span>
+    </div>
+    <div class='loggedIn hide'>
+        <span class="fa-solid fa-circle-check"></span>
+        <span class="msg">Successfully logged in!</span>
+    </div>
+    <div class='loggedOut hide'>
+        <span class="fa-solid fa-arrow-right-from-bracket"></span>
+        <span class="msg">Successfully logged out!</span>
+    </div>
+
+    <div class='alertCart hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">Login to access shopping cart!</span>
+        <span class="close-btn-2">
+            <span class="fa-solid fa-xmark"></span>
+        </span>
+    </div>
+
+    <header>
+        <div class="back">
+            <a href="#" onclick="window.history.back();" class="backBtn">
+                <span class="fa-solid fa-arrow-left"></span>
+            </a>
+            <h2 class="addActorHeader">Search Results</h2>
+        </div>
+        <nav class="navigation">
+            <a href="homePage.html">Home</a>
+            <a id="cart" style="cursor: pointer; color: #fff">Shopping Cart</a>
+            <a id="admin" style="color: #fff">Admin</a>
+            <button class="btnLogin" id="btnLogin">Login</button>
+        </nav>
+    </header>
+
+    <div class="container-fluid">
+        <div class="card-container" id="card-container"></div>
+    </div>
+    <!--LOGIN & REGISTER-->
+    <div class="wrapper">
+        <span class="icon-close">
+            <i class="fa-solid fa-xmark"></i>
+        </span>
+
+        <div class="form-box login">
+            <h2>Login</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" id="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" required>
+                    <label>Password</label>
+                </div>
+
+                <div class="remember-forgot">
+                    <label><input type="checkbox">Remember me</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn" id="login">Login</button>
+
+                <div class="login-register">
+                    <p>Don't have an account? <a href="#" class="register-link"> Register</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-box register">
+            <h2>Registration</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input type="text" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" required>
+                    <label>Password</label>
+                </div>
+
+                <button type="submit" class="btn">Register</button>
+
+                <div class="login-register">
+                    <p>Already have an account? <a href="#" class="login-link"> Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script src="functions.js"></script>
+<script src="script.js"></script>
+
+</html>

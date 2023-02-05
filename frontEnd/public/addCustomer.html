@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="./img/Logo.ico" />
+    <title>DVD Rental Store</title>
+    <link rel="stylesheet" href="./css/addCustomer.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () { //This is to prevent any jQuery code from running before the document is finished loading (is ready). alternative: $(document).ready(function()
+            loginToLogout(); //check if user is logged in
+            onAdminClick();
+            onLoginClick();
+            getStoreName()
+            getCountryName()
+            getCityName()
+            onAddCustomer()
+            cart()
+
+        })
+    </script>
+</head>
+
+<body>
+    <div class='added hide'>
+        <span class="fa-solid fa-circle-check"></span>
+        <span class="msg">Successfully added a new customer!</span>
+    </div>
+    <div class='dupEmail hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">Email already exists!</span>
+    </div>
+    <div class='loggedIn hide'>
+        <span class="fa-solid fa-circle-check"></span>
+        <span class="msg">Successfully logged in!</span>
+    </div>
+    <div class='loggedOut hide'>
+        <span class="fa-solid fa-arrow-right-from-bracket"></span>
+        <span class="msg">Successfully logged out!</span>
+    </div>
+    <div class='enter hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">Please fill up all the fields!</span>
+    </div>
+    <div class='alertCart hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">Login to access shopping cart!</span>
+        <span class="close-btn-2">
+            <span class="fa-solid fa-xmark"></span>
+        </span>
+    </div>
+
+    <header>
+        <div class="back">
+            <a href="admin.html" class="backBtn">
+                <span class="fa-solid fa-arrow-left"></span>
+            </a>
+            <h2 class="addActorHeader">Add Customer</h2>
+        </div>
+        <nav class="navigation">
+            <a href="homePage.html">Home</a>
+            <a id ="cart" style ="cursor: pointer;">Shopping Cart</a>
+            <a id="admin" style="color: #fff">Admin</a>
+            <button class="btnLogin" id="btnLogin">Login</button>
+        </nav>
+    </header>
+    <div class="biggerContainer" style="display: flex; flex-direction: column; width: 100%">
+        <div class="container">
+            <div class="customerInformation">
+                <div class="header"
+                    style="display: flex; justify-content: center; font-size: 2.5em; font-weight: 700; color: #fff; margin-bottom: 3%; margin-top: -3%;">
+                    Customer Information
+                </div>
+
+                <div class="nameRow">
+                    <div class="firstname-bar-container">
+                        <input type="text" class="firstname-bar" placeholder="First Name" id="fName">
+                    </div>
+                    <div class="lastname-bar-container">
+                        <input type="text" class="lastname-bar" placeholder="Last Name" id="lName">
+                    </div>
+                </div>
+
+                <div class="email-bar-container">
+                    <input type="email" class="email-bar" placeholder="Email" id="email">
+                </div>
+                <div class="password-bar-container">
+                    <input type="password" class="password-bar" placeholder="Password" id="password">
+                </div>
+            </div>
+
+            <div class="contactInformation">
+                <div class="header"
+                    style="display: flex; justify-content: center; font-size: 2.5em; font-weight: 700; color: #fff; margin-bottom: 3%; margin-top: -3%;">
+                    Contact Details
+                </div>
+
+                <div class="address-bar-container">
+                    <input type="text" class="address-bar" placeholder="Address" id="address1">
+                </div>
+                <div class="address-bar2-container">
+                    <input type="text" class="address-bar-2" placeholder="Address 2 (Optional)" id="address2">
+                </div>
+
+
+                <div class="row2">
+                    <div class="roww">
+                        <div class="container2" style="display: inline-block;">
+                            <div class="dropdown">
+                                <div class="select select2">
+                                    <span class="selected">City</span>
+                                    <div class="caret"></div>
+                                </div>
+                                <ul class="menu menu3" id="city-names">
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="container3" style="display: inline-block;">
+                            <div class="dropdown">
+                                <div class="select select3">
+                                    <span class="selected">Store</span>
+                                    <div class="caret"></div>
+                                </div>
+                                <ul class="menu" id="store-names">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row2">
+                    <div class="roww">
+                        <div class="district-bar-container">
+                            <input type="text" class="district-bar" placeholder="District" id="district">
+                        </div>
+                        <div class="postalcode-bar-container">
+                            <input type="number" class="postalcode-bar" placeholder="012345" id="postalcode">
+                        </div>
+                        <div class="number-bar-container">
+                            <input type="number" class="number-bar" placeholder="Number" id="phone">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom-row">
+            <div class="submit-container">
+                <button type="submit" class="submit-button" id="addCustomer">Add!
+                </button>
+            </div>
+        </div>
+    </div>
+     <!--LOGIN & REGISTER-->
+     <div class="wrapper">
+        <span class="icon-close">
+            <i class="fa-solid fa-xmark"></i>
+        </span>
+
+        <div class="form-box login">
+            <h2>Login</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" id="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" required>
+                    <label>Password</label>
+                </div>
+
+                <div class="remember-forgot">
+                    <label><input type="checkbox">Remember me</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn" id="login">Login</button>
+
+                <div class="login-register">
+                    <p>Don't have an account? <a href="#" class="register-link"> Register</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-box register">
+            <h2>Registration</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input type="text" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" required>
+                    <label>Password</label>
+                </div>
+
+                <button type="submit" class="btn">Register</button>
+
+                <div class="login-register">
+                    <p>Already have an account? <a href="#" class="login-link"> Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="functions.js"></script>
+
+    <script>
+        var cityNames = JSON.parse(localStorage.getItem('cityNames'));
+
+        var option = "";
+        for (i = 0; i < cityNames.length; i++) {
+            option += " <li value=\"" + (i + 1) + "\">" + cityNames[i].city + "</li>";
+        }
+        document.getElementById("city-names").innerHTML = option
+    </script>
+
+    <script>
+        var countryNames = JSON.parse(localStorage.getItem('countryNames'));
+
+        var option = "";
+        for (i = 0; i < countryNames.length; i++) {
+            option += " <li value=\"" + (i + 1) + "\">" + countryNames[i].country + "</li>";
+        }
+        document.getElementById("country-names").innerHTML = option
+    </script>
+
+    <script>
+        var storeNames = JSON.parse(localStorage.getItem('storeNames'));
+
+        var option = "";
+        for (i = 0; i < storeNames.length; i++) {
+            option += " <li value=\"" + (i + 1) + "\">" + storeNames[i].address + "</li>";
+        }
+        document.getElementById("store-names").innerHTML = option
+    </script>
+
+    <!-- Scrip for dropdown js -->
+    <script src="./dropdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

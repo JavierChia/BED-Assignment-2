@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="shortcut icon" type="image/x-icon" href="./img/Logo.ico" />
+    <title>DVD Rental Store</title>
+    <link rel="stylesheet" href="./css/cart.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            loginToLogout(); //check if user is logged in
+
+            onAdminClick();
+
+            onLoginClick();
+
+            onCheckoutClick();
+
+            let data = sessionStorage.getItem('sc');
+            if (data) {
+                if (JSON.parse(data).length == 0) {
+                    var container = document.getElementById("card-container2");
+                    var noResult = document.createElement("div");
+                    noResult.innerHTML = "No items in your cart!";
+                    container.appendChild(noResult);
+                } else {
+                    displayData(data);
+                }
+            } else {
+                var container = document.getElementById("card-container2");
+                var noResult = document.createElement("div");
+                noResult.innerHTML = "No items in your cart!";
+                container.appendChild(noResult);
+            }
+        })
+
+        function displayData(data) {
+            let parsedData = JSON.parse(data);
+            let container = document.getElementById("card-container");
+            let total = 0;
+
+            let allRows = document.createElement("div");
+
+            parsedData.forEach(function (item, index) {
+                let row = document.createElement("div");
+                row.style.display = "flex";
+                row.style.alignItems = "center";
+                row.style.justifyContent = "space-between";
+                row.style.margin = '10px';
+                row.style.fontSize = "25px";
+                row.style.fontWeight = "500";
+
+                let removeButton = document.createElement("button");
+                removeButton.innerHTML = `<span class="fa-solid fa-circle-minus"></span>`
+                removeButton.classList.add("rmBtn");
+                removeButton.style.border = 'none';
+                removeButton.style.fontSize = '30px';
+                removeButton.style.marginRight = '10px';
+
+                removeButton.addEventListener("click", function () {
+                    parsedData.splice(index, 1);
+                    sessionStorage.setItem("sc", JSON.stringify(parsedData));
+                    container.innerHTML = "";
+                    if (parsedData.length === 0) {
+                        location.reload();
+                    } else {
+                        container.innerHTML = "";
+                        displayData(sessionStorage.getItem("sc"));
+                    }
+                });
+                row.appendChild(removeButton);
+
+                let nameYear = document.createElement("span");
+                nameYear.innerHTML = `${item[0]} (${item[1]})`;
+                row.appendChild(nameYear);
+
+                let price = document.createElement("span");
+                price.style.marginLeft = "auto";
+                price.innerHTML = `$${item[2]}`;
+                row.appendChild(price);
+
+                allRows.appendChild(row);
+
+                total += item[2];
+            });
+
+            container.appendChild(allRows)
+
+            let totalElement = document.createElement("p");
+            totalElement.style.display = "flex";
+            totalElement.style.justifyContent = "flex-end";
+            totalElement.style.fontSize = "30px";
+            totalElement.style.fontWeight = "bold";
+            totalElement.style.borderTop = "3px solid black";
+            totalElement.style.paddingTop = "10px";
+            totalElement.style.marginRight = "10px";
+            totalElement.innerHTML = `Total: &nbsp&nbsp&nbsp&nbsp$${total.toFixed(2)}`;
+
+            let checkoutContainer = document.createElement("div");
+            checkoutContainer.classList.add('checkoutContainer')
+            checkoutContainer.style.display = "flex";
+            checkoutContainer.style.flexDirection = "column";
+            checkoutContainer.style.marginTop= "-1%";
+            checkoutContainer.style.justifyContent = "flex-end";
+
+            let checkoutBoxContainer = document.createElement("div");
+            checkoutBoxContainer.style.display = "flex";
+            checkoutBoxContainer.style.justifyContent = "flex-end";
+
+            let checkout = document.createElement("div");
+            checkout.classList.add('checkout')
+            checkout.style.fontSize = "25px";
+            checkout.style.fontWeight = "bold";
+            checkout.style.paddingTop= "5px"
+            checkout.style.paddingBottom= "5px"
+            checkout.style.paddingLeft= "20px"
+            checkout.style.paddingRight= "20px"
+            checkout.style.marginRight = "10px";
+            checkout.innerHTML = `Checkout`;
+
+            checkoutContainer.appendChild(totalElement);
+            checkoutBoxContainer.appendChild(checkout)
+            checkoutContainer.appendChild(checkoutBoxContainer)
+            container.appendChild(checkoutContainer);
+        }
+    </script>
+</head>
+
+
+<body>
+    <div class='alert hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">You do not have access to the admin page!</span>
+        <span class="close-btn">
+            <span class="fa-solid fa-xmark"></span>
+        </span>
+    </div>
+    
+    <div class='notFound hide'>
+        <span class="fa-solid fa-circle-exclamation"></span>
+        <span class="msg">Film could not be found!</span>
+    </div>
+    <div class='success hide'>
+        <span class="fa-solid fa-circle-check"></span>
+        <span class="msg">Successfully purchased!</span>
+    </div>
+    <div class='loggedOut hide'>
+        <span class="fa-solid fa-arrow-right-from-bracket"></span>
+        <span class="msg">Successfully logged out!</span>
+    </div>
+
+    <header>
+        <div class="back">
+            <a href="#" onclick="window.history.back();" class="backBtn">
+                <span class="fa-solid fa-arrow-left"></span>
+            </a>
+            <h2 class="addActorHeader">Shopping Cart</h2>
+        </div>
+        <nav class="navigation">
+            <a href="homePage.html">Home</a>
+            <a id ="cart" style ="cursor: pointer;">Shopping Cart</a>
+            <a id="admin" style="color: #fff">Admin</a>
+            <button class="btnLogin" id="btnLogin">Login</button>
+        </nav>
+    </header>
+
+    <div class="cardd-container">
+        <div class="card-container" id="card-container"></div>
+    </div>
+
+    <div class="cardd-container2">
+        <div class="card-container2" id="card-container2"></div>
+    </div>
+
+    <!--LOGIN & REGISTER-->
+    <div class="wrapper">
+        <span class="icon-close">
+            <i class="fa-solid fa-xmark"></i>
+        </span>
+
+        <div class="form-box login">
+            <h2>Login</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" id="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" required>
+                    <label>Password</label>
+                </div>
+
+                <div class="remember-forgot">
+                    <label><input type="checkbox">Remember me</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn" id="login">Login</button>
+
+                <div class="login-register">
+                    <p>Don't have an account? <a href="#" class="register-link"> Register</a></p>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-box register">
+            <h2>Registration</h2>
+            <form action="#">
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input type="text" required>
+                    <label>Username</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-box">
+                    <span class="icon">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" required>
+                    <label>Password</label>
+                </div>
+
+                <button type="submit" class="btn">Register</button>
+
+                <div class="login-register">
+                    <p>Already have an account? <a href="#" class="login-link"> Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script src="functions.js"></script>
+<script src="script.js"></script>
+
+</html>
